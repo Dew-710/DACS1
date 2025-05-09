@@ -1,12 +1,14 @@
 import mysql.connector
-from fontTools.misc.cython import returns
+from Handle_login_logout.user import User
+
+
 
 
 def get_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="",
+        password="100106",
         database="food_ordering_db"
     )
 def validate_user(username: str, password: str):
@@ -14,21 +16,24 @@ def validate_user(username: str, password: str):
         conn = get_connection()
         cursor = conn.cursor()
 
-        sql = "SELECT * FROM users WHERE username = %s AND password = %s"
+        sql = """
+            SELECT username ,password, full_name, email, phone, role, address, status
+            FROM users
+            WHERE username = %s AND password = %s AND status = 'active'
+        """
         cursor.execute(sql, (username, password))
         result = cursor.fetchone()
 
         cursor.close()
         conn.close()
 
-        res="none"
-        if result != None:
-            print(result)
-            res=result[5]
-        return res
+        if result:
+            return User(*result)  # Tạo một đối tượng User từ dữ liệu DB
+        else:
+            return None
     except Exception as e:
         print(f"Lỗi khi kết nối CSDL: {e}")
-        return "none"
+        return None
 
 def check_user_exists(username: str) -> bool:
     try:
@@ -49,16 +54,16 @@ def check_user_exists(username: str) -> bool:
         return False
 
 
-def add_user(username :str , password :str ,fullname :str,email :str ,phone :str,role :str) -> bool :
+def add_user(username :str , password :str ,fullname :str,email :str ,phone :str,role :str, address : str) -> bool :
     try :
         conn = get_connection()
         cursor = conn.cursor()
 
 
 
-        sql = "INSERT INTO `users` (`username`, `password`,`full_name`, `email`, `phone` , `role`) VALUES (%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO `users` (`username`, `password`,`full_name`, `email`, `phone` , `role`,`address`) VALUES (%s,%s,%s,%s,%s,%s,%s)"
 
-        cursor.execute(sql, (username,password,fullname,email,phone,role))
+        cursor.execute(sql, (username,password,fullname,email,phone,role,address))
         conn.commit()
 
         cursor.close()
@@ -68,18 +73,25 @@ def add_user(username :str , password :str ,fullname :str,email :str ,phone :str
         print(f"Lỗi khi kết nối CSDL : {e}")
         return False
 
-def add_food (foodname : str , category : str , price : str )-> bool :
-    try :
+def add_food(foodname: str, category: str, price: str) -> bool:
+    try:
+        # Chuyển đổi giá thành số nếu cần
+        price = float(price)
+
         conn = get_connection()
         cursor = conn.cursor()
-        sql = "INSERT INTO `food` (`id`,`name`, `category` ,`price `) VALUES (%s, %s)"
-        cursor.execute(sql ,())
+
+        # Không cần chỉ rõ `id` nếu nó là AUTO_INCREMENT
+        sql = "INSERT INTO `food` (`name`, `category`, `price`) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (foodname, category, price))
+
         conn.commit()
         cursor.close()
         conn.close()
         return True
+
     except Exception as e:
-        print(f"Lỗi khi kết nối CSDL: {e}")
+        print(f"Lỗi khi thêm món ăn vào CSDL: {e}")
         return False
 def validate_foodname(keyword :str) -> bool:
     try:
@@ -99,16 +111,16 @@ def validate_foodname(keyword :str) -> bool:
         print(f"Lỗi khi kết nối CSDL mons awn : {e}")
         return False
 
-def Queue_add (username :str , password :str ,fullname :str,email :str ,phone :str) -> bool :
+def Queue_add (username :str , password :str ,fullname :str,email :str ,phone :str ,address :str ,role : str, status : str) -> bool :
     try :
         conn = get_connection()
         cursor = conn.cursor()
 
 
 
-        sql = "INSERT INTO `queue` (`username`, `password`,`full_name`, `email`, `phone` ) VALUES (%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO `users` (`username`, `password`,`full_name`, `email`, `phone` , `role` , `address`, `status`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
 
-        cursor.execute(sql, (username,password,fullname,email,phone))
+        cursor.execute(sql, (username,password,fullname,email,phone, role,address,  status))
         conn.commit()
 
         cursor.close()
@@ -119,17 +131,99 @@ def Queue_add (username :str , password :str ,fullname :str,email :str ,phone :s
         return False
 
 
-def approve_account( username, password, full_name, email, phone):
+
+def approve_account(username):
+    try:
         conn = get_connection()
         cursor = conn.cursor()
-        try:
-            cursor.execute(
 
-                "INSERT INTO queue (username, password, full_name, email, phone) VALUES (%s, %s, %s, %s, %s)",
-                (username, password, full_name, email, phone)
-            )
-            cursor.execute("DELETE FROM queue WHERE username = %s", (username,))
+        cursor.execute("SELECT username, password, full_name, email, phone, address, role FROM users WHERE username = %s", (username,))
+        data = cursor.fetchone()
+
+        if data and Queue_add(*data, status="active"):
+            cursor.execute("UPDATE users SET status = 'active' WHERE username = %s", (username,))
             conn.commit()
-            print(f"Tài khoản {username} đã được duyệt.")
-        except Exception as e:
-            print("Lỗi xử lý tài khoản:", e)
+            print(f"Duyệt tài khoản '{username}' thành công.")
+        else:
+            print(f"Lỗi duyệt tài khoản '{username}'.")
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        print("Lỗi xử lý:", e)
+
+
+
+def get_in4(username: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        sql = "SELECT * FROM users WHERE username = %s"
+        cursor.execute(sql, (username,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+
+        if result is not None:
+            return result
+        else:
+            return None
+    except Exception as e:
+        print(f"Lỗi khi kết nối CSDL: {e}")
+        return None
+def delete_food(id: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    try :
+        sql= "DELETE FROM food WHERE id = %s"
+        cursor.execute(sql,(id,))
+        conn.commit()
+    except Exception as e:
+        print(f"Lỗi khi kết nối CSDL: {e}")
+        return None
+
+
+def update_user_info(user_id, password=None, email=None, phone=None, address=None):
+    try:
+        conn = get_connection()  # Kết nối với cơ sở dữ liệu
+        cursor = conn.cursor()
+
+        # Tạo câu lệnh SQL cập nhật
+        sql = "UPDATE users SET"
+        params = []
+
+        # Nếu có giá trị mới thì thêm vào câu lệnh và params
+        if password:
+            sql += " password = %s,"
+            params.append(password)
+        if email:
+            sql += " email = %s,"
+            params.append(email)
+        if phone:
+            sql += " phone = %s,"
+            params.append(phone)
+        if address:
+            sql += " address = %s,"
+            params.append(address)
+
+        # Loại bỏ dấu ',' thừa ở cuối câu lệnh SQL
+        sql = sql.rstrip(',')
+
+        # Thêm điều kiện WHERE để chỉ cập nhật người dùng có id tương ứng
+        sql += " WHERE id = %s"
+        params.append(user_id)
+
+        # Thực thi câu lệnh SQL
+        cursor.execute(sql, tuple(params))
+
+        # Lưu thay đổi vào cơ sở dữ liệu
+        conn.commit()
+
+        print(f"[DB] Đã cập nhật thông tin người dùng với id {user_id}")
+
+        cursor.close()
+        conn.close()
+
+    except Exception as e:
+        print(f"Lỗi khi cập nhật thông tin người dùng: {e}")

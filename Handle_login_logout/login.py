@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from uiclient.client_app_layout import MainApp
 
+from Handle_login_logout.user_session import set_current_user
+from uiclient.client_app_layout import MainApp
 from Database.handle import validate_user
 
 
@@ -14,19 +15,29 @@ def main_login_window():
     root.title("Đăng nhập")
     root.geometry("400x400")
 
+    current_user = None  # Biến toàn cục để lưu người đang đăng nhập
+
     def login():
+        global current_user
         username = entry_username.get()
         password = entry_password.get()
-        role = validate_user(username,password)
-        if role!="none":
-            if role == "client":
+        user = validate_user(username, password)
+
+        if user:
+            current_user = user
+            set_current_user(user)
+            print("Đăng nhập thành công:", current_user)
+
+            if user.role == "client":
                 root.destroy()
                 open_main_app()
-            elif role == "admin":
+            elif user.role == "admin":
                 root.destroy()
                 openLoginAppbyAdmin()
         else:
-            messagebox.showerror("Lỗi", "Sai tài khoản hoặc mật khẩu.")
+            messagebox.showerror("Lỗi", "Sai tài khoản, mật khẩu hoặc tài khoản đã bị khóa.")
+
+
     def register():
         root.withdraw()
         open_register()
@@ -52,7 +63,7 @@ def open_main_app():
     app = MainApp()
     app.mainloop()
 def open_register():
-    from uiclient.register import main_register_window
+    from Handle_login_logout.register import main_register_window
     main_register_window()
 def openLoginAppbyAdmin():
     from uiadmin.admin_app_layout import MainAppManager

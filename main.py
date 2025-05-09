@@ -1,5 +1,4 @@
-from uiclient.login import main_login_window
-from uiclient.client_app_layout import MainApp
+from Handle_login_logout.login import main_login_window
 
 if __name__ == "__main__":
 

@@ -1,6 +1,7 @@
 
 from uiadmin.menuadmin import MenuSidebar
 import customtkinter as ctk
+
 class MainAppManager(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -16,6 +17,7 @@ class MainAppManager(ctk.CTk):
         self.content_frame = ctk.CTkFrame(self)
         self.content_frame.pack(side="right", expand=True, fill="both")
 
+    # MainAppManager
     def show_frame(self, function_name):
         # Xóa nội dung cũ
         for widget in self.content_frame.winfo_children():
@@ -40,4 +42,9 @@ class MainAppManager(ctk.CTk):
         elif function_name == "Sửa món ăn":
             from uiadmin.edit_food import EditFoodFrame
             frame = EditFoodFrame(self.content_frame)
+            frame.pack(expand=True, fill="both")
+
+        elif function_name == "Chỉnh sửa tài khoản":
+            from Handle_login_logout.editaccount import EditAccountFrame
+            frame = EditAccountFrame(self.content_frame)
             frame.pack(expand=True, fill="both")

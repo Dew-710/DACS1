@@ -21,6 +21,7 @@ def main_register_window():
         fullname = entry_fullname.get().strip()
         phone = entry_phone.get().strip()
         role = combo_role.get().strip()
+        address = entry_address.get().strip()
         if not username or not password or not email or not fullname or not phone or not role:
             messagebox.showinfo("Lỗi", "Vui lòng nhập đủ thông tin!")
         elif check_user_exists(username):
@@ -28,10 +29,11 @@ def main_register_window():
         elif not validate_email(email) :
             messagebox.showinfo("lỗi", "Email chưa đúng định dạng")
         elif role == "admin":
+            status = "inactive"
             messagebox.showinfo("Thông báo", "Bạn cần thời gian để được duyệt!")
-            Queue_add(username,password,fullname,email,phone)
+            Queue_add(username,password,fullname,email,phone, address, role, status)
             open_login_app()
-        elif add_user(username,password,fullname,email,phone,role):
+        elif add_user(username,password,fullname,email,phone,role,address):
             messagebox.showinfo("Thành Công!" , "Đã Tạo Tài Khoản!")
             root.destroy()
             open_login_app()
@@ -55,6 +57,9 @@ def main_register_window():
     entry_phone = ctk.CTkEntry(root, placeholder_text="Số điện thoại")
     entry_phone.pack(pady=5)
 
+    entry_address= ctk.CTkEntry(root, placeholder_text="Địa chỉ ")
+    entry_address.pack(pady=5)
+
     combo_role = ctk.CTkComboBox(root, values=["client", "admin"])
     combo_role.pack(pady=5)
     combo_role.set("client")
@@ -65,11 +70,8 @@ def main_register_window():
     root.bind('<Return>', lambda event: register())
     root.mainloop()
 
-    btn_login = ctk.CTkButton(root, text="Đăng kí", command=register)
-    btn_login.pack(pady=20)
-    root.bind('<Return>', lambda event: register())
-    root.mainloop()
+
 def open_login_app():
-    from uiclient.login import main_login_window
+    from Handle_login_logout.login import main_login_window
     main_login_window()
 

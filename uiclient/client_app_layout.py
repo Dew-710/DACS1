@@ -1,7 +1,6 @@
 # uiclient/client_app_layout.py
 from tkinter import mainloop
 
-
 import customtkinter as ctk
 from uiclient.menu import MenuSidebar
 from uiclient.food_list import FoodList
@@ -24,7 +23,6 @@ class MainApp(ctk.CTk):
         # Khu vực chính - danh sách món ăn
         self.food_list = FoodList(self)
         self.food_list.grid(row=0, column=1, sticky="nsew", padx=5, pady=10)
-        
 
         # Giỏ hàng bên phải
         self.cart = CartView(self)
