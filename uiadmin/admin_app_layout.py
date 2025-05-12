@@ -45,6 +45,6 @@ class MainAppManager(ctk.CTk):
             frame.pack(expand=True, fill="both")
 
         elif function_name == "Chỉnh sửa tài khoản":
-            from Handle_login_logout.editaccount import EditAccountFrame
+            from Handle_login_logout.editaccountadmin import EditAccountFrame
             frame = EditAccountFrame(self.content_frame)
             frame.pack(expand=True, fill="both")

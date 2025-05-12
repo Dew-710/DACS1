@@ -184,7 +184,7 @@ def delete_food(id: str):
         return None
 
 
-def update_user_info(user_id, password=None, email=None, phone=None, address=None):
+def update_user_info(username, password=None, email=None, phone=None, address=None):
     try:
         conn = get_connection()  # Kết nối với cơ sở dữ liệu
         cursor = conn.cursor()
@@ -211,8 +211,8 @@ def update_user_info(user_id, password=None, email=None, phone=None, address=Non
         sql = sql.rstrip(',')
 
         # Thêm điều kiện WHERE để chỉ cập nhật người dùng có id tương ứng
-        sql += " WHERE id = %s"
-        params.append(user_id)
+        sql += " WHERE username = %s"
+        params.append(username)
 
         # Thực thi câu lệnh SQL
         cursor.execute(sql, tuple(params))
@@ -220,7 +220,7 @@ def update_user_info(user_id, password=None, email=None, phone=None, address=Non
         # Lưu thay đổi vào cơ sở dữ liệu
         conn.commit()
 
-        print(f"[DB] Đã cập nhật thông tin người dùng với id {user_id}")
+        print(f"[DB] Đã cập nhật thông tin người dùng với id {username}")
 
         cursor.close()
         conn.close()

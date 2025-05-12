@@ -93,8 +93,8 @@ class EditAccountFrame(ctk.CTkFrame):
             )
 
             # Cập nhật thông tin vào cơ sở dữ liệu
-            self.update_user_info(
-                user_id=self.user.id,  # Lấy user_id từ đối tượng user
+            update_user_info(
+                username = self.user.username,
                 password=self.user.password,
                 email=self.user.email,
                 phone=self.user.phone,
