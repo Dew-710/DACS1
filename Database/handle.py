@@ -17,9 +17,10 @@ def validate_user(username: str, password: str):
         cursor = conn.cursor()
 
         sql = """
-            SELECT username ,password, full_name, email, phone, role, address, status
+            SELECT username, password, full_name, email, phone, address, role
             FROM users
             WHERE username = %s AND password = %s AND status = 'active'
+
         """
         cursor.execute(sql, (username, password))
         result = cursor.fetchone()
@@ -227,3 +228,22 @@ def update_user_info(username, password=None, email=None, phone=None, address=No
 
     except Exception as e:
         print(f"Lỗi khi cập nhật thông tin người dùng: {e}")
+def add_food_order (username,fullname,address,phone,order_status,food_items_str,total ):
+    try :
+        conn = get_connection()
+        cursor = conn.cursor()
+
+
+
+        sql = "INSERT INTO `orders` (`username`, `full_name`   , `address` , `phone`   ,`order_status` ,`food_item`, `price`) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+
+        cursor.execute(sql, (username,fullname,address,phone,order_status,food_items_str,total))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Lỗi khi kết nối CSDL : {e}")
+        return False
+

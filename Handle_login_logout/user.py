@@ -1,15 +1,13 @@
 class User:
-    def __init__(self,  username, password, email, phone, address, role, created_at, updated_at):
+    def __init__(self,  username, password,fullname, email, phone, address, role):
 
         self.username = username
         self.password = password
+        self.fullname = fullname
         self.email = email
         self.phone = phone
         self.address = address
         self.role = role
-        self.created_at = created_at
-        self.updated_at = updated_at
-
 
     def update_info(self, password=None, email=None, phone=None, address=None):
         if password is not None:
