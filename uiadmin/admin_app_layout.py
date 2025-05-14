@@ -40,8 +40,8 @@ class MainAppManager(ctk.CTk):
             frame.pack(expand=True, fill="both")
 
         elif function_name == "Sửa món ăn":
-            from uiadmin.edit_food import EditFoodFrame
-            frame = EditFoodFrame(self.content_frame)
+            from uiadmin.edit_food import FoodList
+            frame = FoodList(self.content_frame)
             frame.pack(expand=True, fill="both")
 
         elif function_name == "Chỉnh sửa tài khoản":

@@ -12,7 +12,7 @@ class DeleteFoodFrame(ctk.CTkFrame):
         self.conn = get_connection()
         self.cursor = self.conn.cursor()
 
-        ctk.set_appearance_mode("dark")
+
 
         self.search_var = ctk.StringVar()
         self.search_entry = ctk.CTkEntry(self, placeholder_text="Nhập tên món", textvariable=self.search_var)
