@@ -7,6 +7,8 @@ from uiclient.food_list import FoodList
 from uiclient.cart import CartView
 
 
+from uiclient.order_list import OrderList  # THÊM DÒNG NÀY
+
 class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -20,11 +22,23 @@ class MainApp(ctk.CTk):
         self.menu = MenuSidebar(self)
         self.menu.grid(row=0, column=0, sticky="ns", padx=5, pady=10)
 
-        # Khu vực chính - danh sách món ăn
+        # Widget chính: danh sách món ăn
         self.food_list = FoodList(self)
         self.food_list.grid(row=0, column=1, sticky="nsew", padx=5, pady=10)
+
+        # Widget chính: danh sách đơn hàng
+        self.order_list = OrderList(self)
+        self.order_list.grid(row=0, column=1, sticky="nsew", padx=5, pady=10)
+        self.order_list.grid_remove()  # Ẩn lúc đầu
 
         # Giỏ hàng bên phải
         self.cart = CartView(self)
         self.cart.grid(row=0, column=2, sticky="ns", padx=5, pady=10)
 
+    def show_food_list(self):
+        self.food_list.grid()
+        self.order_list.grid_remove()
+
+    def show_order_list(self):
+        self.order_list.grid()
+        self.food_list.grid_remove()

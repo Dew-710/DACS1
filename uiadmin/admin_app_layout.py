@@ -48,8 +48,15 @@ class MainAppManager(ctk.CTk):
             from Handle_login_logout.editaccountadmin import EditAccountFrame
             frame = EditAccountFrame(self.content_frame)
             frame.pack(expand=True, fill="both")
+
         elif function_name == "Quản lí Đơn Đặt Hàng":
             from uiadmin.order import Order_list
             frame = Order_list(self.content_frame)
             frame.pack(expand=True, fill="both")
+
+        elif function_name == "Thống kê":
+            from uiadmin.analyze import App
+            frame = App(self.content_frame)
+            frame.pack(expand=True, fill="both")
+
 

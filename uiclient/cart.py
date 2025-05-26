@@ -107,15 +107,15 @@ class CartView(ctk.CTkFrame):
 
         from Database.handle import add_food_order
         order_id = add_food_order(username, fullname, address, phone, order_status, food_items_str, total)
-        print(order_id)
 
 
         self.show_payment_qr(total,order_id)
         threading.Thread(target=self.simulate_payment, args=(order_id,), daemon=True).start()
 
-    def show_payment_qr(self, amount,idfood):
-        url = "https://api.vietqr.io/v2/generate"
+    def show_payment_qr(self, amount, idfood):
+        from customtkinter import CTkImage
 
+        url = "https://api.vietqr.io/v2/generate"
         amount_int = int(round(amount))
 
         payload = {
@@ -129,39 +129,29 @@ class CartView(ctk.CTkFrame):
 
         try:
             response = requests.post(url, json=payload)
-            print("Status code:", response.status_code)
-            print("Response text:", response.text)
 
             if response.status_code == 200:
                 data = response.json().get("data", {})
                 qr_data_url = data.get("qrDataURL")
-                print("QR Data URL:", qr_data_url)
 
                 if qr_data_url:
-                    # qrDataURL dạng: "data:image/png;base64,iVBORw0K..."
-                    # Tách lấy phần base64 sau dấu phẩy
                     base64_str = qr_data_url.split(",")[1]
-
-                    # Giải mã base64 thành bytes ảnh
                     img_data = base64.b64decode(base64_str)
 
                     img = Image.open(BytesIO(img_data))
-                    img = img.resize((250, 250))
-                    photo = ImageTk.PhotoImage(img)
+                    ctk_image = CTkImage(light_image=img, dark_image=img, size=(250, 250))
 
                     top = ctk.CTkToplevel(self)
                     top.title("Quét mã để thanh toán")
                     top.geometry("300x350")
+                    self.qr_window = top  # Để có thể đóng từ thread khác
 
                     label = ctk.CTkLabel(top, text=f"Thanh toán: {amount_int} VNĐ", font=("Arial", 14))
                     label.pack(pady=10)
 
-                    qr_label = ctk.CTkLabel(top, image=photo)
-                    qr_label.image = photo
+                    qr_label = ctk.CTkLabel(top, image=ctk_image, text="")
+                    qr_label.image = ctk_image  # Giữ ảnh
                     qr_label.pack(pady=10)
-
-
-
 
                 else:
                     print("Không tìm thấy qrDataURL trong phản hồi")
@@ -172,15 +162,16 @@ class CartView(ctk.CTkFrame):
             print("Lỗi khi gọi API VietQR:", e)
 
     def simulate_payment(self, order_id):
-
-
         print(f"Đang kiểm tra đơn hàng {order_id}...")
         time.sleep(10)
+        self.after(0, lambda: self.payment_success(order_id))
+
+    def payment_success(self, order_id):
         messagebox.showinfo("Thanh toán", f"Thanh toán đơn hàng {order_id} thành công!")
         self.cart_items.clear()
         self.update_cart_view()
+        if hasattr(self, "qr_window") and self.qr_window.winfo_exists():
+            self.qr_window.destroy()
 
-
-
-        #lỗi đóng cua so widget khiến chuong trình bị break
+        #lỗi đóng cua so widget khiến chuong trình bị break ( da fix boi chatgpt) loi vi thao tac tren ui nhung lai nam trong thread phu)
 

@@ -5,8 +5,6 @@ from Database.handle import update_user_info
 
 from Handle_login_logout.user_session import get_current_user, set_current_user
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 
 class EditAccountFrame(ctk.CTkFrame):
     def __init__(self, parent, logout_callback=None, save_callback=None):
