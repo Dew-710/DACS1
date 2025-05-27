@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
-
+from Handle_login_logout.user_session import set_current_user
 from uiadmin.admin_app_layout import MainAppManager
 from Database.handle import validate_user
 
@@ -24,7 +24,7 @@ def main_login_window():
 
         if user:
             current_user = user
-            # set_current_user(user)
+            set_current_user(user)
             print("Đăng nhập thành công:", current_user)
             root.destroy()
             if user.role == "client":

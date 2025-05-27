@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import tkinter.messagebox as mb
-from Handle_login_logout.user_session import get_current_user, set_current_user
+from Handle_login_logout.user_session import set_current_user
 from Handle_login_logout.editaccountadmin import EditAccountFrame
 
 class EditAccountPopup(ctk.CTkToplevel):

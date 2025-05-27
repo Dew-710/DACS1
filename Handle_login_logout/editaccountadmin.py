@@ -107,6 +107,7 @@ class EditAccountFrame(ctk.CTkFrame):
     def logout(self):
         print("Đăng xuất người dùng.")
         set_current_user(None)
+        self.destroy()
         if self.logout_callback:
             self.logout_callback()
         else:
