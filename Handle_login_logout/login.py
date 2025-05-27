@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from tkinter import messagebox
-# from Handle_login_logout.user import validate_user, set_current_user
+
 from uiadmin.admin_app_layout import MainAppManager
+from Database.handle import validate_user
 
 def main_login_window():
     ctk.set_appearance_mode("dark")
@@ -19,8 +20,7 @@ def main_login_window():
         nonlocal current_user
         username = entry_username.get()
         password = entry_password.get()
-        # user = validate_user(username, password)
-        user = None  # demo, thay bằng gọi validate_user thực tế
+        user = validate_user(username, password)  # Sử dụng hàm kiểm tra tài khoản thực tế
 
         if user:
             current_user = user
