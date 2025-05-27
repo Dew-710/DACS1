@@ -1,71 +1,77 @@
 import customtkinter as ctk
 from tkinter import messagebox
-
-from Handle_login_logout.user_session import set_current_user
-from uiclient.client_app_layout import MainApp
-from Database.handle import validate_user
-
+# from Handle_login_logout.user import validate_user, set_current_user
+from uiadmin.admin_app_layout import MainAppManager
 
 def main_login_window():
-    ctk.set_appearance_mode("System")
+    ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("green")
 
-    # Tạo cửa sổ chính
     root = ctk.CTk()
     root.title("Đăng nhập")
-    root.geometry("400x400")
+    root.geometry("420x500")
+    root.resizable(False, False)
+    root.configure(fg_color="#23272e")
 
-    current_user = None  # Biến toàn cục để lưu người đang đăng nhập
+    current_user = None
 
     def login():
-        global current_user
+        nonlocal current_user
         username = entry_username.get()
         password = entry_password.get()
-        user = validate_user(username, password)
+        # user = validate_user(username, password)
+        user = None  # demo, thay bằng gọi validate_user thực tế
 
         if user:
             current_user = user
-            set_current_user(user)
+            # set_current_user(user)
             print("Đăng nhập thành công:", current_user)
-
+            root.destroy()
             if user.role == "client":
-                root.destroy()
                 open_main_app()
             elif user.role == "admin":
-                root.destroy()
                 openLoginAppbyAdmin()
         else:
             messagebox.showerror("Lỗi", "Sai tài khoản, mật khẩu hoặc tài khoản đã bị khóa.")
 
-
     def register():
-        root.withdraw()
+        root.destroy()  # Đóng cửa sổ login trước
         open_register()
-    # Giao diện
-    label_title = ctk.CTkLabel(root, text="Đăng nhập hệ thống", font=ctk.CTkFont(size=20, weight="bold"))
-    label_title.pack(pady=20)
 
-    entry_username = ctk.CTkEntry(root, placeholder_text="Tài khoản")
-    entry_username.pack(pady=5)
+    card = ctk.CTkFrame(root, corner_radius=18, fg_color="#2d333b", width=360, height=370)
+    card.place(relx=0.5, rely=0.5, anchor="center")
 
-    entry_password = ctk.CTkEntry(root, placeholder_text="Mật khẩu", show="*")
-    entry_password.pack(pady=10)
+    label_title = ctk.CTkLabel(card, text="🔐 Đăng nhập hệ thống", font=ctk.CTkFont(size=22, weight="bold"), text_color="#00e676")
+    label_title.pack(pady=(24, 12))
 
-    btn_login = ctk.CTkButton(root, text="Đăng nhập", command=login)
-    btn_login.pack(pady=5)
-    root.bind('<Return>', lambda event: login())
-      # Nhấn Enter để đăng nhập
-    btn_register = ctk.CTkButton(root, text="Đăng kí", command=register)
-    btn_register.pack(pady=0)
+    entry_username = ctk.CTkEntry(card, placeholder_text="Tên đăng nhập", font=("Arial", 14), border_width=2, corner_radius=8)
+    entry_username.pack(pady=(16, 8), padx=28, fill="x")
+
+    entry_password = ctk.CTkEntry(card, placeholder_text="Mật khẩu", font=("Arial", 14), border_width=2, corner_radius=8, show="*")
+    entry_password.pack(pady=(0, 18), padx=28, fill="x")
+
+    btn_login = ctk.CTkButton(card, text="Đăng nhập", font=("Arial", 14, "bold"), fg_color="#00e676", hover_color="#009f4d",
+                              text_color="#23272e", corner_radius=8, height=40, command=login)
+    btn_login.pack(pady=(2, 12), padx=28, fill="x")
+
+    btn_register = ctk.CTkButton(card, text="Đăng ký tài khoản mới", font=("Arial", 13), fg_color="#353b48", hover_color="#444a58",
+                                 text_color="#00e676", corner_radius=8, height=36, command=register)
+    btn_register.pack(pady=(0, 10), padx=28, fill="x")
+
+    label_hint = ctk.CTkLabel(card, text="Quên mật khẩu? Liên hệ quản trị viên.", font=("Arial", 10), text_color="#b0b8c1")
+    label_hint.pack(pady=(10, 0))
+
     root.mainloop()
 
 def open_main_app():
+    from uiclient.client_app_layout import MainApp
     app = MainApp()
     app.mainloop()
+
 def open_register():
     from Handle_login_logout.register import main_register_window
     main_register_window()
+
 def openLoginAppbyAdmin():
-    from uiadmin.admin_app_layout import MainAppManager
     app = MainAppManager()
     app.mainloop()

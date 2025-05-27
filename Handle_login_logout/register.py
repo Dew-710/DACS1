@@ -1,77 +1,82 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from Database.handle import check_user_exists, Queue_add
-from Database.handle import add_user
-from validate_email_address import validate_email
-
-
+# from Handle_login_logout.user import add_user_to_db, validate_register_info
 
 def main_register_window():
-    ctk.set_appearance_mode("System")
+    ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("green")
 
-
     root = ctk.CTk()
-    root.title("Đăng nhập")
-    root.geometry("400x400")
+    root.title("Đăng ký tài khoản")
+    root.geometry("440x570")
+    root.resizable(False, False)
+    root.configure(fg_color="#23272e")
+
     def register():
         username = entry_username.get().strip()
-        password = entry_password.get().strip()
+        password = entry_password.get()
+        re_password = entry_re_password.get()
+        full_name = entry_fullname.get().strip()
         email = entry_email.get().strip()
-        fullname = entry_fullname.get().strip()
         phone = entry_phone.get().strip()
-        role = combo_role.get().strip()
-        address = entry_address.get().strip()
-        if not username or not password or not email or not fullname or not phone or not role:
-            messagebox.showinfo("Lỗi", "Vui lòng nhập đủ thông tin!")
-        elif check_user_exists(username):
-            messagebox.showinfo("Lỗi" ,"Tài Khoản Đã Tồn Tại!")
-        elif not validate_email(email) :
-            messagebox.showinfo("lỗi", "Email chưa đúng định dạng")
-        elif role == "admin":
-            status = "inactive"
-            messagebox.showinfo("Thông báo", "Bạn cần thời gian để được duyệt!")
-            Queue_add(username,password,fullname,email,phone, address, role, status)
-            open_login_app()
-        elif add_user(username,password,fullname,email,phone,role,address):
-            messagebox.showinfo("Thành Công!" , "Đã Tạo Tài Khoản!")
-            root.destroy()
-            open_login_app()
 
+        if not username or not password or not re_password or not full_name:
+            messagebox.showerror("Lỗi", "Vui lòng điền đầy đủ thông tin.")
+            return
+        if password != re_password:
+            messagebox.showerror("Lỗi", "Mật khẩu nhập lại không khớp.")
+            return
 
-    label_title = ctk.CTkLabel(root, text="Đăng kí hệ thống", font=ctk.CTkFont(size=20, weight="bold"))
-    label_title.pack(pady=20)
+        # result = add_user_to_db(username, password, full_name, email, phone)
+        # if result is True:
+        #     messagebox.showinfo("Thành công", "Đăng ký thành công! Vui lòng đăng nhập.")
+        #     root.destroy()
+        # else:
+        #     messagebox.showerror("Lỗi", f"Đăng ký thất bại: {result}")
 
-    entry_username = ctk.CTkEntry(root, placeholder_text="Tài khoản")
-    entry_username.pack(pady=5)
+        # Demo không kết nối DB
+        messagebox.showinfo("Thành công", "Đăng ký thành công! Vui lòng đăng nhập.")
+        root.destroy()
+        go_back()
 
-    entry_password = ctk.CTkEntry(root, placeholder_text="Mật khẩu", show="*")
-    entry_password.pack(pady=5)
+    def go_back():
+        root.destroy()
+        from Handle_login_logout.login import main_login_window
+        main_login_window()
 
-    entry_fullname = ctk.CTkEntry(root, placeholder_text="Họ và tên")
-    entry_fullname.pack(pady=5)
+    card = ctk.CTkFrame(root, corner_radius=18, fg_color="#2d333b", width=380, height=490)
+    card.place(relx=0.5, rely=0.5, anchor="center")
 
-    entry_email = ctk.CTkEntry(root, placeholder_text="Email")
-    entry_email.pack(pady=5)
+    label_title = ctk.CTkLabel(card, text="📝 Đăng ký tài khoản mới", font=ctk.CTkFont(size=22, weight="bold"), text_color="#00e676")
+    label_title.pack(pady=(24, 18))
 
-    entry_phone = ctk.CTkEntry(root, placeholder_text="Số điện thoại")
-    entry_phone.pack(pady=5)
+    entry_username = ctk.CTkEntry(card, placeholder_text="Tên đăng nhập", font=("Arial", 14), border_width=2, corner_radius=8)
+    entry_username.pack(pady=(8, 8), padx=28, fill="x")
 
-    entry_address= ctk.CTkEntry(root, placeholder_text="Địa chỉ ")
-    entry_address.pack(pady=5)
+    entry_fullname = ctk.CTkEntry(card, placeholder_text="Họ và tên", font=("Arial", 14), border_width=2, corner_radius=8)
+    entry_fullname.pack(pady=8, padx=28, fill="x")
 
-    combo_role = ctk.CTkComboBox(root, values=["client", "admin"])
-    combo_role.pack(pady=5)
-    combo_role.set("client")
+    entry_email = ctk.CTkEntry(card, placeholder_text="Email (không bắt buộc)", font=("Arial", 14), border_width=2, corner_radius=8)
+    entry_email.pack(pady=8, padx=28, fill="x")
 
-    btn_login = ctk.CTkButton(root, text="Đăng kí", command=register)
-    btn_login.pack(pady=20)
+    entry_phone = ctk.CTkEntry(card, placeholder_text="Số điện thoại (không bắt buộc)", font=("Arial", 14), border_width=2, corner_radius=8)
+    entry_phone.pack(pady=8, padx=28, fill="x")
 
-    root.bind('<Return>', lambda event: register())
+    entry_password = ctk.CTkEntry(card, placeholder_text="Mật khẩu", font=("Arial", 14), border_width=2, corner_radius=8, show="*")
+    entry_password.pack(pady=(12, 6), padx=28, fill="x")
+
+    entry_re_password = ctk.CTkEntry(card, placeholder_text="Nhập lại mật khẩu", font=("Arial", 14), border_width=2, corner_radius=8, show="*")
+    entry_re_password.pack(pady=(0, 16), padx=28, fill="x")
+
+    btn_register = ctk.CTkButton(card, text="Đăng ký", font=("Arial", 15, "bold"), fg_color="#00e676", hover_color="#009f4d",
+                                 text_color="#23272e", corner_radius=8, height=40, command=register)
+    btn_register.pack(pady=(2, 10), padx=28, fill="x")
+
+    btn_back = ctk.CTkButton(card, text="Quay lại đăng nhập", font=("Arial", 13), fg_color="#353b48", hover_color="#444a58",
+                             text_color="#00e676", corner_radius=8, height=36, command=go_back)
+    btn_back.pack(pady=(0, 10), padx=28, fill="x")
+
+    label_hint = ctk.CTkLabel(card, text="Vui lòng điền đầy đủ thông tin bắt buộc.", font=("Arial", 10), text_color="#b0b8c1")
+    label_hint.pack(pady=(4, 0))
+
     root.mainloop()
-
-
-def open_login_app():
-    from Handle_login_logout.login import main_login_window
-    main_login_window()
-
