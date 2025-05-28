@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter as tk
 from Database.handle import get_connection
 
 class FoodList(ctk.CTkFrame):
@@ -81,33 +82,47 @@ class FoodList(ctk.CTkFrame):
                 item["widget"].pack_forget()
 
     def _bind_to_mousewheel(self, event=None):
-        # Bind mouse wheel events for different platforms
-        self.scrollable_frame.bind("<MouseWheel>", self._on_mousewheel)  # Windows
-        self.scrollable_frame.bind("<Button-4>", self._on_mousewheel)  # Linux scroll up
-        self.scrollable_frame.bind("<Button-5>", self._on_mousewheel)  # Linux scroll down
+        # Bind events for Windows/macOS and Linux
+        self.scrollable_frame.bind("<MouseWheel>", self._on_mousewheel)  # Windows and macOS
+        self.scrollable_frame.bind("<Button-4>", self._on_mousewheel)    # Linux scroll up
+        self.scrollable_frame.bind("<Button-5>", self._on_mousewheel)    # Linux scroll down
 
     def _unbind_from_mousewheel(self, event=None):
-        # Unbind mouse wheel events
         self.scrollable_frame.unbind("<MouseWheel>")
         self.scrollable_frame.unbind("<Button-4>")
         self.scrollable_frame.unbind("<Button-5>")
 
     def _on_mousewheel(self, event):
-        print("Thuộc tính của scrollable_frame:", dir(self.scrollable_frame))
+        print("Event:", event)
+        canvas = None
+        if hasattr(self.scrollable_frame, "_canvas") and self.scrollable_frame._canvas is not None:
+            canvas = self.scrollable_frame._canvas
+            print("Found canvas using _canvas attribute.")
+        else:
+            for child in self.scrollable_frame.winfo_children():
+                if isinstance(child, tk.Canvas):
+                    canvas = child
+                    print("Found canvas by scanning children.")
+                    break
+
+        if canvas is None:
+            print("Không tìm thấy canvas để cuộn!")
+            return
+
         try:
-            if event.delta:
+            if event.delta:  # Windows, macOS
                 scroll_amount = -1 if event.delta > 0 else 1
-            elif event.num == 4:
+            elif event.num == 4:  # Linux scroll up
                 scroll_amount = -1
-            elif event.num == 5:
+            elif event.num == 5:  # Linux scroll down
                 scroll_amount = 1
             else:
                 return
-            # Thử _canvas
-            self.scrollable_frame._canvas.yview_scroll(scroll_amount, "units")
-            # Hoặc thử trực tiếp
-            # self.scrollable_frame.yview_scroll(scroll_amount, "units")
-        except AttributeError as e:
-            print("Lỗi truy cập canvas/yview_scroll:", e)
+
+            canvas.yview_scroll(scroll_amount, "units")
         except Exception as e:
             print("Lỗi cuộn chuột:", e)
+
+
+
+            # dung ai fix k duoc

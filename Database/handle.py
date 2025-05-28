@@ -29,7 +29,7 @@ def validate_user(username: str, password: str):
         conn.close()
 
         if result:
-            return User(*result)  # Tạo một đối tượng User từ dữ liệu DB
+            return User(*result)
         else:
             return None
     except Exception as e:
@@ -76,13 +76,11 @@ def add_user(username :str , password :str ,fullname :str,email :str ,phone :str
 
 def add_food(foodname: str, category: str, price: str) -> bool:
     try:
-        # Chuyển đổi giá thành số nếu cần
         price = float(price)
 
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Không cần chỉ rõ `id` nếu nó là AUTO_INCREMENT
         sql = "INSERT INTO `food` (`name`, `category`, `price`) VALUES (%s, %s, %s)"
         cursor.execute(sql, (foodname, category, price))
 
@@ -187,14 +185,13 @@ def delete_food(id: str):
 
 def update_user_info(username, password=None, email=None, phone=None, address=None):
     try:
-        conn = get_connection()  # Kết nối với cơ sở dữ liệu
+        conn = get_connection()
         cursor = conn.cursor()
 
-        # Tạo câu lệnh SQL cập nhật
+
         sql = "UPDATE users SET"
         params = []
 
-        # Nếu có giá trị mới thì thêm vào câu lệnh và params
         if password:
             sql += " password = %s,"
             params.append(password)
@@ -208,17 +205,13 @@ def update_user_info(username, password=None, email=None, phone=None, address=No
             sql += " address = %s,"
             params.append(address)
 
-        # Loại bỏ dấu ',' thừa ở cuối câu lệnh SQL
         sql = sql.rstrip(',')
 
-        # Thêm điều kiện WHERE để chỉ cập nhật người dùng có id tương ứng
         sql += " WHERE username = %s"
         params.append(username)
 
-        # Thực thi câu lệnh SQL
         cursor.execute(sql, tuple(params))
 
-        # Lưu thay đổi vào cơ sở dữ liệu
         conn.commit()
 
         print(f"[DB] Đã cập nhật thông tin người dùng với id {username}")

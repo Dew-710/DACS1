@@ -21,12 +21,21 @@ class App(ctk.CTkFrame):
         self.load_data()
 
     def load_data(self):
-        conn = get_connection()
-        query = "SELECT * FROM orders"
-        self.df = pd.read_sql(query, conn)
-        conn.close()
-        self.df["price"] = pd.to_numeric(self.df["price"], errors="coerce")
+        try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)  # Sử dụng dictionary=True để có kết quả dạng từ điển
 
+            query = "SELECT * FROM orders"
+            cursor.execute(query)
+            results = cursor.fetchall()  # Lấy tất cả kết quả từ truy vấn
+
+            # Chuyển đổi kết quả thành DataFrame
+            self.df = pd.DataFrame(results)
+
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            print(f"Lỗi khi tải dữ liệu: {e}")
     def analyze_food_time(self):
         if self.df.empty or "food_item" not in self.df.columns or "created_at" not in self.df.columns:
             self.output.delete("0.0", "end")
@@ -79,24 +88,31 @@ class App(ctk.CTkFrame):
             self.output.insert("end", "Không có dữ liệu doanh thu hoặc cột thời gian.")
             return
 
-        df = self.df.dropna(subset=['price']).copy()
-        df.loc[:, 'date'] = pd.to_datetime(df['created_at']).dt.date
+        try:
+            df = self.df.dropna(subset=['price']).copy()
+            df.loc[:, 'date'] = pd.to_datetime(df['created_at']).dt.date
 
-        revenue_by_day = df.groupby('date')['price'].sum()
+            # Ensure 'price' column is numeric
+            df['price'] = pd.to_numeric(df['price'], errors='coerce').fillna(0)
 
-        total_revenue = revenue_by_day.sum()
+            revenue_by_day = df.groupby('date')['price'].sum()
 
-        # Hiển thị kết quả
-        self.output.delete("0.0", "end")
-        self.output.insert("end", "Doanh thu từng ngày:\n")
-        self.output.insert("end", revenue_by_day.to_string())
-        self.output.insert("end", f"\n\nTổng doanh thu: {total_revenue:,.0f} VND\n")
+            total_revenue = revenue_by_day.sum()
 
-        # Vẽ biểu đồ doanh thu
-        plt.figure(figsize=(10, 4))
-        revenue_by_day.plot(kind='bar', color='green')
-        plt.xlabel('Ngày')
-        plt.ylabel('Doanh thu (VND)')
-        plt.title('Doanh thu theo từng ngày')
-        plt.tight_layout()
-        plt.show()
+            # Display results
+            self.output.delete("0.0", "end")
+            self.output.insert("end", "Doanh thu từng ngày:\n")
+            self.output.insert("end", revenue_by_day.to_string())
+            self.output.insert("end", f"\n\nTổng doanh thu: {total_revenue:,.0f} VND\n")
+
+            # Plot revenue chart
+            plt.figure(figsize=(10, 4))
+            revenue_by_day.plot(kind='bar', color='green')
+            plt.xlabel('Ngày')
+            plt.ylabel('Doanh thu (VND)')
+            plt.title('Doanh thu theo từng ngày')
+            plt.tight_layout()
+            plt.show()
+        except Exception as e:
+            self.output.delete("0.0", "end")
+            self.output.insert("end", f"Lỗi khi phân tích doanh thu: {e}")

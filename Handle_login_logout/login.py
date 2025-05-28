@@ -20,7 +20,7 @@ def main_login_window():
         nonlocal current_user
         username = entry_username.get()
         password = entry_password.get()
-        user = validate_user(username, password)  # Sử dụng hàm kiểm tra tài khoản thực tế
+        user = validate_user(username, password)
 
         if user:
             current_user = user
@@ -35,7 +35,7 @@ def main_login_window():
             messagebox.showerror("Lỗi", "Sai tài khoản, mật khẩu hoặc tài khoản đã bị khóa.")
 
     def register():
-        root.destroy()  # Đóng cửa sổ login trước
+        root.destroy()
         open_register()
 
     card = ctk.CTkFrame(root, corner_radius=18, fg_color="#2d333b", width=360, height=370)
