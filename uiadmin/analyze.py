@@ -23,13 +23,13 @@ class App(ctk.CTkFrame):
     def load_data(self):
         try:
             conn = get_connection()
-            cursor = conn.cursor(dictionary=True)  # Sử dụng dictionary=True để có kết quả dạng từ điển
+            cursor = conn.cursor(dictionary=True)
 
             query = "SELECT * FROM orders"
             cursor.execute(query)
-            results = cursor.fetchall()  # Lấy tất cả kết quả từ truy vấn
+            results = cursor.fetchall()
 
-            # Chuyển đổi kết quả thành DataFrame
+
             self.df = pd.DataFrame(results)
 
             cursor.close()
@@ -91,21 +91,16 @@ class App(ctk.CTkFrame):
         try:
             df = self.df.dropna(subset=['price']).copy()
             df.loc[:, 'date'] = pd.to_datetime(df['created_at']).dt.date
-
-            # Ensure 'price' column is numeric
             df['price'] = pd.to_numeric(df['price'], errors='coerce').fillna(0)
 
             revenue_by_day = df.groupby('date')['price'].sum()
 
             total_revenue = revenue_by_day.sum()
 
-            # Display results
             self.output.delete("0.0", "end")
             self.output.insert("end", "Doanh thu từng ngày:\n")
             self.output.insert("end", revenue_by_day.to_string())
             self.output.insert("end", f"\n\nTổng doanh thu: {total_revenue:,.0f} VND\n")
-
-            # Plot revenue chart
             plt.figure(figsize=(10, 4))
             revenue_by_day.plot(kind='bar', color='green')
             plt.xlabel('Ngày')

@@ -7,46 +7,39 @@ class MainAppManager(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        # Tông màu xanh & chế độ sáng
-        ctk.set_appearance_mode("light")
+        ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
 
         self.geometry("1200x700")
         self.title("Ứng Dụng Quản Lí")
 
-        # ===== Header với Logo & tên app =====
         self.header = ctk.CTkFrame(self, fg_color="#0074D9", height=80)
         self.header.pack(side="top", fill="x")
         self.header.pack_propagate(False)
-        # Logo
         try:
-            logo_img = Image.open("logo.png").resize((56,56))
+            logo_img = Image.open("/home/dew/DACS1/pngtree-fresh-hamburger-with-cheese-png-image_14563117.png").resize((56,56))
             self.tk_logo = ImageTk.PhotoImage(logo_img)
             self.logo_label = ctk.CTkLabel(self.header, image=self.tk_logo, text="", fg_color="transparent")
             self.logo_label.pack(side="left", padx=(24, 12), pady=12)
         except Exception as e:
             self.logo_label = ctk.CTkLabel(self.header, text="🧑‍💼", font=("Arial", 32), fg_color="transparent")
             self.logo_label.pack(side="left", padx=(24, 12), pady=12)
-        # Tên app
+
         self.app_name_label = ctk.CTkLabel(self.header, text="ADMIN DASHBOARD", font=("Arial", 24, "bold"),
                                            text_color="white", fg_color="transparent")
         self.app_name_label.pack(side="left", padx=0, pady=18)
 
-        # ===== Frame sidebar =====
         self.menuadmin = MenuSidebar(self, self.show_frame)
         self.menuadmin.pack(side="left", fill="y", padx=0, pady=(8,0))
 
-        # ===== Frame chính để thay đổi nội dung =====
+
         self.content_frame = ctk.CTkFrame(self)
         self.content_frame.pack(side="right", expand=True, fill="both", padx=12, pady=10)
 
-    # MainAppManager
     def show_frame(self, function_name):
-        # Xóa nội dung cũ
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
-        # Hiện frame mới dựa trên function_name
         if function_name == "Duyệt Tài Khoản":
             from uiadmin.queue_list import Queue_list
             frame = Queue_list(self.content_frame)

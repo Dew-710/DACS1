@@ -7,7 +7,6 @@ class AddFoodFrame(ctk.CTkFrame):
 
         ctk.CTkLabel(self, text="➕ Thêm món ăn mới", font=("Arial", 24)).pack(pady=20)
 
-        # Lưu các Entry để lấy dữ liệu sau
         self.foodname_entry = ctk.CTkEntry(self, placeholder_text="Tên món ăn")
         self.foodname_entry.pack(pady=10)
 

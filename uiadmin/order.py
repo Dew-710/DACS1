@@ -41,7 +41,7 @@ class Order_list(ctk.CTkFrame):
             command=lambda: self.approve_and_remove(order_id, frame)
         ).pack(pady=(0, 10))
 
-        # Lưu thông tin của order bao gồm username
+
         self.order_items.append({"order_id": order_id, "username": username, "widget": frame})
 
     def approve_and_remove(self, order_id, frame):
