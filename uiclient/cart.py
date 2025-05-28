@@ -25,7 +25,8 @@ class CartView(ctk.CTkFrame):
 
         self.total_label = ctk.CTkLabel(self, text="Tổng cộng: 0 VNĐ", font=("Arial", 14))
         self.total_label.pack()
-        submit_button = ctk.CTkButton(self, text="Đặt hàng", command=self.submit_order)
+        submit_button = ctk.CTkButton(self, text="Đặt hàng", fg_color="#00e676", hover_color="#009f4d",
+                              text_color="#23272e",command=self.submit_order)
         submit_button.pack(pady=10)
 
     def add_item_to_cart(self, item_id, name, category, price):
@@ -69,10 +70,12 @@ class CartView(ctk.CTkFrame):
             qty_label = ctk.CTkLabel(item_frame, text=f"Số lượng: {item['quantity']}", width=100)
             qty_label.pack(side="left")
 
-            minus_btn = ctk.CTkButton(item_frame, text="-", width=30, command=lambda i=index: self.change_quantity(i, -1))
+            minus_btn = ctk.CTkButton(item_frame, text="-",fg_color="#00e676", hover_color="#009f4d",
+                              text_color="#23272e", width=30, command=lambda i=index: self.change_quantity(i, -1))
             minus_btn.pack(side="left", padx=2)
 
-            plus_btn = ctk.CTkButton(item_frame, text="+", width=30, command=lambda i=index: self.change_quantity(i, 1))
+            plus_btn = ctk.CTkButton(item_frame, text="+",fg_color="#00e676", hover_color="#009f4d",
+                              text_color="#23272e", width=30, command=lambda i=index: self.change_quantity(i, 1))
             plus_btn.pack(side="left", padx=2)
 
         self.total_label.configure(text=f"Tổng cộng: {total} VNĐ")
@@ -152,6 +155,18 @@ class CartView(ctk.CTkFrame):
                     qr_label = ctk.CTkLabel(top, image=ctk_image, text="")
                     qr_label.image = ctk_image  # Giữ ảnh
                     qr_label.pack(pady=10)
+                    btncash = ctk.CTkButton(
+                        top,
+                        text="Thanh toán tiền mặt",
+                        font=("Arial", 14, "bold"),
+                        fg_color="#00e676",
+                        hover_color="#009f4d",
+                        text_color="#23272e",
+                        corner_radius=8,
+                        height=40,
+                        command=self.cash
+                    )
+                    btncash.pack(pady=5)
 
                 else:
                     print("Không tìm thấy qrDataURL trong phản hồi")
@@ -174,4 +189,6 @@ class CartView(ctk.CTkFrame):
             self.qr_window.destroy()
 
         #lỗi đóng cua so widget khiến chuong trình bị break ( da fix boi chatgpt) loi vi thao tac tren ui nhung lai nam trong thread phu)
+    def cash (self) :
+        self.destroy()
 

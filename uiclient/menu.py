@@ -18,7 +18,8 @@ class MenuSidebar(ctk.CTkFrame):
             font=("Arial", 14),
             command=self.edit_account,
             height=40,
-            corner_radius=8
+            corner_radius=8,fg_color="#00e676", hover_color="#009f4d",
+                              text_color="#23272e"
         ).pack(pady=(0, 20), padx=10, fill="x")
 
         # Tiêu đề danh mục
@@ -34,6 +35,9 @@ class MenuSidebar(ctk.CTkFrame):
                 width=160,
                 height=35,
                 corner_radius=8,
+                fg_color="#00e676",
+                hover_color="#009f4d",
+                text_color="#23272e",
                 command=lambda c=cat: self.master.food_list.filter_by_category(c)
             ).pack(pady=5, padx=10)
 
@@ -45,6 +49,8 @@ class MenuSidebar(ctk.CTkFrame):
             font=("Arial", 13),
             height=40,
             corner_radius=8,
+            fg_color="#00e676", hover_color="#009f4d",
+            text_color="#23272e",
             command=self.show_orders
         ).pack(pady=5, padx=10, fill="x")
 

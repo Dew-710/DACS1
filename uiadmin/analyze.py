@@ -1,8 +1,8 @@
 import customtkinter as ctk
-from Database.handle import get_connection
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
+from Database.handle import get_connection
 
 class App(ctk.CTkFrame):
     def __init__(self, master=None, **kwargs):
@@ -18,9 +18,9 @@ class App(ctk.CTkFrame):
         self.output.pack(pady=10)
 
         self.df = pd.DataFrame()
-        self.load_data()
+        self.load_data_analyze()
 
-    def load_data(self):
+    def load_data_analyze(self):
         try:
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -29,17 +29,31 @@ class App(ctk.CTkFrame):
             cursor.execute(query)
             results = cursor.fetchall()
 
+            cursor.close()
+            conn.close()
+
+            if not results:
+                self.output.insert("end", "Không có dữ liệu trong bảng orders.\n")
+                return
 
             self.df = pd.DataFrame(results)
 
-            cursor.close()
-            conn.close()
+
+            required_columns = ['food_item', 'created_at', 'price']
+            missing_columns = [col for col in required_columns if col not in self.df.columns]
+            if missing_columns:
+                self.output.insert("end", f"Lỗi: Thiếu các cột {missing_columns} trong dữ liệu.\n")
+                self.df = pd.DataFrame()
+                return
+
         except Exception as e:
-            print(f"Lỗi khi tải dữ liệu: {e}")
+            self.output.insert("end", f"Lỗi khi tải dữ liệu: {e}\n")
+            self.df = pd.DataFrame()
+
     def analyze_food_time(self):
         if self.df.empty or "food_item" not in self.df.columns or "created_at" not in self.df.columns:
             self.output.delete("0.0", "end")
-            self.output.insert("end", "Không có dữ liệu món ăn hoặc cột thời gian.")
+            self.output.insert("end", "Không có dữ liệu món ăn hoặc cột thời gian.\n")
             return
 
         df = self.df.dropna(subset=['food_item']).copy()
@@ -62,17 +76,17 @@ class App(ctk.CTkFrame):
         food_df = pd.DataFrame(rows)
         if food_df.empty:
             self.output.delete("0.0", "end")
-            self.output.insert("end", "Không tìm thấy dữ liệu món ăn hợp lệ.")
+            self.output.insert("end", "Không tìm thấy dữ liệu món ăn hợp lệ.\n")
             return
 
         summary = food_df.groupby(['date', 'food'])['count'].sum().unstack(fill_value=0)
 
-        # Hiển thị kết quả
+        # Display results
         self.output.delete("0.0", "end")
         self.output.insert("end", "Thống kê số lượng món ăn bán mỗi ngày:\n")
         self.output.insert("end", summary.to_string())
 
-        # Vẽ biểu đồ
+        # Plot chart
         plt.figure(figsize=(10, 5))
         summary.plot(ax=plt.gca())
         plt.xlabel('Ngày')
@@ -85,7 +99,7 @@ class App(ctk.CTkFrame):
     def analyze_revenue(self):
         if self.df.empty or "price" not in self.df.columns or "created_at" not in self.df.columns:
             self.output.delete("0.0", "end")
-            self.output.insert("end", "Không có dữ liệu doanh thu hoặc cột thời gian.")
+            self.output.insert("end", "Không có dữ liệu doanh thu hoặc cột thời gian.\n")
             return
 
         try:
@@ -93,7 +107,7 @@ class App(ctk.CTkFrame):
             df.loc[:, 'date'] = pd.to_datetime(df['created_at']).dt.date
             df['price'] = pd.to_numeric(df['price'], errors='coerce').fillna(0)
 
-            revenue_by_day = df.groupby('date')['price'].sum()
+            revenue_by_day = df.groupby('date')['price'].sum() * 0.2
 
             total_revenue = revenue_by_day.sum()
 
@@ -101,6 +115,7 @@ class App(ctk.CTkFrame):
             self.output.insert("end", "Doanh thu từng ngày:\n")
             self.output.insert("end", revenue_by_day.to_string())
             self.output.insert("end", f"\n\nTổng doanh thu: {total_revenue:,.0f} VND\n")
+
             plt.figure(figsize=(10, 4))
             revenue_by_day.plot(kind='bar', color='green')
             plt.xlabel('Ngày')
@@ -110,4 +125,4 @@ class App(ctk.CTkFrame):
             plt.show()
         except Exception as e:
             self.output.delete("0.0", "end")
-            self.output.insert("end", f"Lỗi khi phân tích doanh thu: {e}")
+            self.output.insert("end", f"Lỗi khi phân tích doanh thu: {e}\n")

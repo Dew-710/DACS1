@@ -1,19 +1,17 @@
-# uiadmin/admin_app_layout.py
 from uiadmin.menuadmin import MenuSidebar
 import customtkinter as ctk
-from PIL import Image, ImageTk  # Thêm để load logo
+from PIL import Image, ImageTk
 
 class MainAppManager(ctk.CTk):
     def __init__(self):
         super().__init__()
 
         ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
-
+        ctk.set_default_color_theme("green")
         self.geometry("1200x700")
-        self.title("Ứng Dụng Quản Lí")
+        self.title("Ứng Dụng Quản Lý")
 
-        self.header = ctk.CTkFrame(self, fg_color="#0074D9", height=80)
+        self.header = ctk.CTkFrame(self, fg_color="#23272e", height=80)
         self.header.pack(side="top", fill="x")
         self.header.pack_propagate(False)
         try:
@@ -26,14 +24,13 @@ class MainAppManager(ctk.CTk):
             self.logo_label.pack(side="left", padx=(24, 12), pady=12)
 
         self.app_name_label = ctk.CTkLabel(self.header, text="ADMIN DASHBOARD", font=("Arial", 24, "bold"),
-                                           text_color="white", fg_color="transparent")
+                                           text_color="#00e676", fg_color="transparent")
         self.app_name_label.pack(side="left", padx=0, pady=18)
 
         self.menuadmin = MenuSidebar(self, self.show_frame)
         self.menuadmin.pack(side="left", fill="y", padx=0, pady=(8,0))
 
-
-        self.content_frame = ctk.CTkFrame(self)
+        self.content_frame = ctk.CTkFrame(self, fg_color="#2d333b")
         self.content_frame.pack(side="right", expand=True, fill="both", padx=12, pady=10)
 
     def show_frame(self, function_name):

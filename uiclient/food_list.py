@@ -49,7 +49,8 @@ class FoodList(ctk.CTkFrame):
         label.pack(padx=10, pady=10)
 
         add_button = ctk.CTkButton(
-            frame, text="Thêm vào giỏ",
+            frame, text="Thêm vào giỏ",fg_color="#00e676", hover_color="#009f4d",
+                              text_color="#23272e",
             command=lambda: self.master.cart.add_item_to_cart(id, name, category, price)
         )
         add_button.pack(pady=(0, 10))
