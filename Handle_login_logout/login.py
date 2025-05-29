@@ -41,7 +41,7 @@ def main_login_window():
     card = ctk.CTkFrame(root, corner_radius=18, fg_color="#2d333b", width=360, height=370)
     card.place(relx=0.5, rely=0.5, anchor="center")
 
-    label_title = ctk.CTkLabel(card, text="🔐 Đăng nhập hệ thống", font=ctk.CTkFont(size=22, weight="bold"), text_color="#00e676")
+    label_title = ctk.CTkLabel(card, text=" Đăng nhập hệ thống ", font=ctk.CTkFont(size=22, weight="bold"), text_color="#00e676")
     label_title.pack(pady=(24, 12))
 
     entry_username = ctk.CTkEntry(card, placeholder_text="Tên đăng nhập", font=("Arial", 14), border_width=2, corner_radius=8)

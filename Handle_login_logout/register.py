@@ -43,7 +43,7 @@ def main_register_window():
             status = "inactive"
             messagebox.showinfo("Thông báo", "Bạn cần thời gian để được duyệt!")
             Queue_add(username, password, full_name, email, phone, address, role, status)
-            open_main_app()
+            main_login_window()
             return
 
         if add_user(username, password, full_name, email, phone, role, address):
