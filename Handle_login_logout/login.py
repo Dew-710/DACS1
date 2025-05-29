@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
 from Handle_login_logout.user_session import set_current_user
-from uiadmin.admin_app_layout import MainAppManager
+
 from Database.handle import validate_user
 
 def main_login_window():
@@ -53,6 +53,7 @@ def main_login_window():
     btn_login = ctk.CTkButton(card, text="Đăng nhập", font=("Arial", 14, "bold"), fg_color="#00e676", hover_color="#009f4d",
                               text_color="#23272e", corner_radius=8, height=40, command=login)
     btn_login.pack(pady=(2, 12), padx=28, fill="x")
+    root.bind('<Return>', lambda event: login())
 
     btn_register = ctk.CTkButton(card, text="Đăng ký tài khoản mới", font=("Arial", 13), fg_color="#353b48", hover_color="#444a58",
                                  text_color="#00e676", corner_radius=8, height=36, command=register)
@@ -62,6 +63,7 @@ def main_login_window():
     label_hint.pack(pady=(10, 0))
 
     root.mainloop()
+
 
 def open_main_app():
     from uiclient.client_app_layout import MainApp
@@ -73,5 +75,6 @@ def open_register():
     main_register_window()
 
 def openLoginAppbyAdmin():
+    from uiadmin.admin_app_layout import MainAppManager
     app = MainAppManager()
     app.mainloop()

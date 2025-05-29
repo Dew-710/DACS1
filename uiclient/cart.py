@@ -7,8 +7,8 @@ import customtkinter as ctk
 from Handle_login_logout.user_session import get_current_user
 import requests
 from io import BytesIO
-from PIL import Image, ImageTk
-import tkinter as tk
+from PIL import Image
+
 import threading
 # da luong chatgpt
 

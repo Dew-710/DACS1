@@ -64,10 +64,10 @@ class App(ctk.CTkFrame):
             date = row['date']
             items = [item.strip() for item in str(row['food_item']).split(',')]
             for item in items:
-                m = re.match(r"(.+?) x(\d+)", item)
-                if m:
-                    food = m.group(1).strip()
-                    count = int(m.group(2))
+                soluong = re.match(r"(.+?) x(\d+)", item)
+                if soluong:
+                    food = soluong.group(1).strip()
+                    count = int(soluong.group(2))
                 else:
                     food = item
                     count = 1

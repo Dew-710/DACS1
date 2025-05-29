@@ -93,6 +93,7 @@ def main_register_window():
     btn_register = ctk.CTkButton(card, text="Đăng ký", font=("Arial", 15, "bold"), fg_color="#00e676", hover_color="#009f4d",
                                  text_color="#23272e", corner_radius=8, height=40, command=register)
     btn_register.pack(pady=(2, 10), padx=28, fill="x")
+    root.bind('<Return>', lambda event: register())
 
     btn_back = ctk.CTkButton(card, text="Quay lại đăng nhập", font=("Arial", 13), fg_color="#353b48", hover_color="#444a58",
                              text_color="#00e676", corner_radius=8, height=36, command=go_back)
