@@ -1,8 +1,7 @@
 import base64
 import time
-from pyexpat.errors import messages
+from statistics import quantiles
 from tkinter import messagebox
-
 import customtkinter as ctk
 from Handle_login_logout.user_session import get_current_user
 import requests
@@ -96,6 +95,7 @@ class CartView(ctk.CTkFrame):
         fullname = self.user.fullname
         address = self.user.address
         phone = self.user.phone
+
         order_status = "pending delivery"
 
         if not self.cart_items:

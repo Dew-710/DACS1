@@ -245,3 +245,36 @@ def add_food_order(username, fullname, address, phone, order_status, food_items_
     except Exception as e:
         print(f"Lỗi khi kết nối CSDL: {e}")
         return None
+def get_user_by_email(email: str):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        sql = "SELECT * FROM users WHERE email = %s"
+        cursor.execute(sql, (email,))
+        result = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return result
+
+    except Exception as e:
+        print(f"Lỗi khi kết nối CSDL: {e}")
+        return None
+def update_user_password(email: str, new_password: str) -> bool:
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        sql = "UPDATE users SET password = %s WHERE email = %s"
+        cursor.execute(sql, (new_password, email))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return True
+
+    except Exception as e:
+        print(f"Lỗi khi cập nhật mật khẩu: {e}")
+        return False
