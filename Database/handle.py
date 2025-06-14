@@ -56,16 +56,16 @@ def check_user_exists(username: str) -> bool:
         return False
 
 
-def add_user(username :str , password :str ,fullname :str,email :str ,phone :str,role :str, address : str) -> bool :
+def add_user(username :str , password :str ,fullname :str,email :str ,phone :str,role :str, address : str, status : str) -> bool :
     try :
         conn = get_connection()
         cursor = conn.cursor()
 
 
 
-        sql = "INSERT INTO `users` (`username`, `password`,`full_name`, `email`, `phone` , `role`,`address`) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO `users` (`username`, `password`,`full_name`, `email`, `phone` , `role`,`address`, `status`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
 
-        cursor.execute(sql, (username,password,fullname,email,phone,role,address))
+        cursor.execute(sql, (username,password,fullname,email,phone,role,address,status))
         conn.commit()
 
         cursor.close()

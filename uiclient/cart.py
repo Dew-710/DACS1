@@ -96,7 +96,7 @@ class CartView(ctk.CTkFrame):
         address = self.user.address
         phone = self.user.phone
 
-        order_status = "pending delivery"
+        order_status = "Đang xử lý"
 
         if not self.cart_items:
             print("Giỏ hàng trống!")
@@ -109,11 +109,11 @@ class CartView(ctk.CTkFrame):
 
 
         from Database.handle import add_food_order
-        order_id = add_food_order(username, fullname, address, phone, order_status, food_items_str, total)
+        id = add_food_order(username, fullname, address, phone, order_status, food_items_str, total)
 
 
-        self.show_payment_qr(total,order_id)
-        threading.Thread(target=self.simulate_payment, args=(order_id,), daemon=True).start()
+        self.show_payment_qr(total,id)
+        threading.Thread(target=self.simulate_payment, args=(id,), daemon=True).start()
 
     def show_payment_qr(self, amount, idfood):
         from customtkinter import CTkImage

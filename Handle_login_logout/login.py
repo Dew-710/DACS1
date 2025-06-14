@@ -8,9 +8,9 @@ import string
 from Handle_login_logout.user_session import set_current_user
 from Database.handle import validate_user, get_user_by_email, update_user_password
 
-# Email configuration (replace with your email and app password)
+
 EMAIL_ADDRESS = "lehoanhdung710@gmail.com"
-EMAIL_PASSWORD = "kpia goup emym krtm"  # Use Gmail App Password
+EMAIL_PASSWORD = "kpia goup emym krtm"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
@@ -20,7 +20,7 @@ def send_reset_code(email, reset_code):
         msg["From"] = EMAIL_ADDRESS
         msg["To"] = email
         msg["Subject"] = "Password Reset Code"
-        body = f"Your password reset code is: {reset_code}\nThis code is valid for 10 minutes."
+        body = f"Mã để cập nhật mật khẩu là: {reset_code}\n.Code sẽ tồn tại trong vòng 30s."
         msg.attach(MIMEText(body, "plain"))
 
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)

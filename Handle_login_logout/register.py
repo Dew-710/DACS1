@@ -23,6 +23,7 @@ def main_register_window():
         address = entry_address.get().strip()
         role = entry_role.get()
 
+
         if not username or not password or not re_password or not full_name:
             messagebox.showinfo("Lỗi", "Vui lòng nhập đủ thông tin bắt buộc!")
             return
@@ -46,7 +47,7 @@ def main_register_window():
             main_login_window()
             return
 
-        if add_user(username, password, full_name, email, phone, role, address):
+        if add_user(username, password, full_name, email, phone, role, address,status = "active"):
             messagebox.showinfo("Thành Công!", "Đã tạo tài khoản!")
             root.destroy()
             main_login_window()

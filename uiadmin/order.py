@@ -9,10 +9,10 @@ class Order_list(ctk.CTkFrame):
         self.cursor = self.conn.cursor()
 
         # Danh sách chờ xác minh
-        ctk.CTkLabel(self, text="Đơn hàng CHƯA XÁC MINH (pending delivery)", font=("Arial", 16, "bold"), text_color="#FFD600").pack(pady=(15, 5))
+        ctk.CTkLabel(self, text="Đơn hàng CHƯA XÁC MINH (Đang xử lý)", font=("Arial", 16, "bold"), text_color="#FFD600").pack(pady=(15, 5))
         self.pending_frame = ctk.CTkFrame(self)
         self.pending_frame.pack(fill="x", padx=10)
-        self.load_order_items(frame=self.pending_frame, status="pending delivery")
+        self.load_order_items(frame=self.pending_frame, status="Đang xử lý")
 
         # Danh sách đơn còn lại
         ctk.CTkLabel(self, text="Đơn hàng ĐÃ XÁC MINH/Khác", font=("Arial", 16, "bold"), text_color="#00E676").pack(pady=(18, 5))
@@ -22,14 +22,14 @@ class Order_list(ctk.CTkFrame):
 
     def load_order_items(self, frame, status):
         try:
-            if status == "pending delivery":
+            if status == "Đang xử lý":
                 self.cursor.execute(
                     "SELECT order_id, username, full_name, phone, address, food_item, order_status FROM orders WHERE order_status = %s",
-                    ('pending delivery',))
+                    ('Đang xử lý',))
             else:
                 self.cursor.execute(
                     "SELECT order_id, username, full_name, phone, address, food_item, order_status FROM orders WHERE order_status != %s",
-                    ('pending delivery',))
+                    ('Đang xử lý',))
             for row in self.cursor.fetchall():
                 self.create_order_items(*row, parent_frame=frame)
         except Exception as e:
@@ -42,7 +42,7 @@ class Order_list(ctk.CTkFrame):
         info = f"{full_name} - {phone} - [{address}] - {food_item}\nTrạng thái: {order_status}"
         ctk.CTkLabel(frame, text=info, font=("Arial", 14)).pack(padx=10, pady=10)
 
-        if order_status == "pending delivery":
+        if order_status == "Đang xử lý":
             ctk.CTkButton(
                 frame,
                 text="✔️ Duyệt đơn hàng",
@@ -51,7 +51,7 @@ class Order_list(ctk.CTkFrame):
 
     def approve_and_remove(self, order_id, frame):
         try:
-            self.cursor.execute("UPDATE orders SET order_status = %s WHERE order_id = %s", ('delivered', order_id))
+            self.cursor.execute("UPDATE orders SET order_status = %s WHERE order_id = %s", ('Đã giao', order_id))
             self.conn.commit()
             frame.destroy()
             messagebox.showinfo("Thành công", "Đơn hàng đã được duyệt")
