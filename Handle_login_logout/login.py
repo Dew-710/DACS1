@@ -7,12 +7,20 @@ import random
 import string
 from Handle_login_logout.user_session import set_current_user
 from Database.handle import validate_user, get_user_by_email, update_user_password
+import threading
+
+from chatbox.server_socket import run_server
+
+server_thread = threading.Thread(target=run_server, daemon=True)
+server_thread.start()
+
 
 
 EMAIL_ADDRESS = "lehoanhdung710@gmail.com"
 EMAIL_PASSWORD = "kpia goup emym krtm"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
+
 
 def send_reset_code(email, reset_code):
     try:
@@ -197,4 +205,5 @@ def openLoginAppbyAdmin():
     app.mainloop()
 
 if __name__ == "__main__":
+
     main_login_window()

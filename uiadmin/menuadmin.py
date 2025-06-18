@@ -47,6 +47,7 @@ class MenuSidebar(ctk.CTkFrame):
         ctk.CTkLabel(self, text="📋 Menu chức năng", font=("Arial", 18, "bold")).pack(pady=(20, 15))
 
         functions = [
+            ("👤 Nhắn Tin", "Nhắn Tin"),
             ("👤 Tài Khoản", "Chỉnh sửa tài khoản"),
             ("👥 Duyệt Tài Khoản", "Duyệt Tài Khoản"),
             ("➕ Thêm món ăn", "Thêm món ăn"),

@@ -2,11 +2,13 @@ import customtkinter as ctk
 from Handle_login_logout.edit_account_client import EditAccountPopup
 from Handle_login_logout.user_session import get_current_user
 
+
 class MenuSidebar(ctk.CTkFrame):
     def __init__(self, parent):
+        from chatbox.client_gui import ChatClient
         super().__init__(parent, width=200, corner_radius=15)
         self.master = parent  # Tham chiếu đến MainApp
-
+        self.ChatClientClass = ChatClient
         self.configure(fg_color="transparent")  # Nền trong suốt nếu dùng theme sáng/tối
 
         # Nút chỉnh sửa tài khoản
@@ -20,6 +22,15 @@ class MenuSidebar(ctk.CTkFrame):
             height=40,
             corner_radius=8,fg_color="#00e676", hover_color="#009f4d",
                               text_color="#23272e"
+        ).pack(pady=(0, 20), padx=10, fill="x")
+        ctk.CTkButton(
+            self,
+            text="👤 Nhắn Tin",
+            font=("Arial", 14),
+            command=self.open_chat_client,
+            height=40,
+            corner_radius=8, fg_color="#00e676", hover_color="#009f4d",
+            text_color="#23272e"
         ).pack(pady=(0, 20), padx=10, fill="x")
 
         # Tiêu đề danh mục
@@ -59,3 +70,6 @@ class MenuSidebar(ctk.CTkFrame):
 
     def show_orders(self):
         self.master.show_order_list()
+
+    def open_chat_client(self):
+        self.ChatClientClass(self.master)

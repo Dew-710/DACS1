@@ -71,3 +71,7 @@ class MainAppManager(ctk.CTk):
             from uiadmin.analyze import App
             frame = App(self.content_frame)
             frame.pack(expand=True, fill="both")
+        elif function_name == "Nhắn Tin":
+            from chatbox.server_gui import ServerChatGUI
+            frame = ServerChatGUI(self.content_frame)
+            frame.pack(expand=True, fill="both")
