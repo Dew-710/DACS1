@@ -51,7 +51,7 @@ def main_login_window():
     root = ctk.CTk()
     root.title("Đăng nhập")
     root.geometry("420x500")
-    root.resizable(False, False)
+    root.resizable(True, True)
     root.configure(fg_color="#23272e")
 
     current_user = None
@@ -73,6 +73,7 @@ def main_login_window():
                 open_main_app()
             elif user.role == "admin":
                 openLoginAppbyAdmin()
+
         else:
             messagebox.showerror("Lỗi", "Sai tài khoản, mật khẩu hoặc tài khoản đã bị khóa.")
 

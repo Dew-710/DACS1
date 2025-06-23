@@ -10,7 +10,7 @@ def main_register_window():
     root = ctk.CTk()
     root.title("Đăng ký tài khoản")
     root.geometry("440x650")
-    root.resizable(False, False)
+    root.resizable(True, False)
     root.configure(fg_color="#23272e")
 
     def register():

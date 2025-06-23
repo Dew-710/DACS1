@@ -278,3 +278,36 @@ def update_user_password(email: str, new_password: str) -> bool:
     except Exception as e:
         print(f"Lỗi khi cập nhật mật khẩu: {e}")
         return False
+def insert_msg (username:str ,msg : str) :
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        sql = "INSERT INTO `chat` (`sender_username`, `message`) VALUES (%s , %s)"
+        cursor.execute(sql, ( username,msg ))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return True
+
+    except Exception as e:
+        print(f"Lỗi khi cập nhật mật khẩu: {e}")
+        return False
+def get_msg():
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        sql = "SELECT message, created_at FROM chat ORDER BY created_at ASC"
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return "\n".join([f"[{row[1]}] - {row[0]}" for row in rows])
+
+    except Exception as e:
+        print(f"Lỗi khi lấy tin nhắn: {e}")
+        return ""

@@ -3,6 +3,7 @@ import threading
 
 from tkinter import messagebox
 from Handle_login_logout.user_session import get_current_user
+from Database.handle import get_msg
 
 HOST = '127.0.0.1'
 PORT = 5051
@@ -39,12 +40,21 @@ class ServerChatGUI(ctk.CTkFrame):
         self.receive_thread = threading.Thread(target=self.receive_messages, daemon=True)
         self.receive_thread.start()
 
+
+
+        all_messages = get_msg()
+        self.text_area.configure(state="normal")
+        self.text_area.insert("end", all_messages + "\n")
+        self.text_area.configure(state="disabled")
+
     def send_message(self, event=None):
+        from Database.handle import insert_msg
         msg = self.entry.get()
         if msg:
             full_msg = f" [admin] {self.user.username}: {msg}" if self.user else f"Unknown: {msg}"
             try:
                 self.sock.sendall(full_msg.encode("utf-8"))
+                insert_msg(self.user.username,full_msg)
             except Exception as e:
                 messagebox.showerror("Lỗi", f"Lỗi gửi tin: {e}")
             self.entry.delete(0, "end")
@@ -55,7 +65,8 @@ class ServerChatGUI(ctk.CTkFrame):
                 data = self.sock.recv(1024)
                 if not data:
                     break
-                self.display_message(data.decode("utf-8"))
+                msg = data.decode("utf-8")
+                self.after(0, lambda m=msg: self.display_message(m))
             except:
                 break
 
