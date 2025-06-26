@@ -67,7 +67,6 @@ def main_login_window():
         if user:
             current_user = user
             set_current_user(user)
-            print("Đăng nhập thành công:", current_user)
             root.destroy()
             if user.role == ("user"):
                 open_main_app()

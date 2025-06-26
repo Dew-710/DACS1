@@ -9,7 +9,7 @@ from io import BytesIO
 from PIL import Image
 
 import threading
-# da luong chatgpt
+
 
 
 class CartView(ctk.CTkFrame):

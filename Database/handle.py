@@ -311,3 +311,20 @@ def get_msg():
     except Exception as e:
         print(f"Lỗi khi lấy tin nhắn: {e}")
         return ""
+
+def cancel_order(order_id: int) -> bool:
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        sql = "UPDATE orders SET order_status = 'cancelled' WHERE order_id = %s"
+        cursor.execute(sql, (order_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return True
+
+    except Exception as e:
+        print(f"Lỗi khi hủy đơn hàng: {e}")
+        return False

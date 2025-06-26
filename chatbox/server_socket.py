@@ -1,7 +1,7 @@
 import socket
 import threading
 
-HOST = '0.0.0.0'
+HOST = '192.168.1.11'
 PORT = 5051
 
 clients = []
@@ -21,7 +21,6 @@ def handle_client(conn, addr):
             if not data:
                 break
             msg = f" {data.decode('utf-8')}"
-            print(msg)
             broadcast(msg.encode('utf-8'), conn)
         except:
             break
@@ -31,7 +30,7 @@ def handle_client(conn, addr):
 
 def run_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #// Cho phép tái sử dụng địa chỉ cổng
     server.bind((HOST, PORT))
     server.listen()
     print(f"Server chat đang chạy tại {HOST}:{PORT}")

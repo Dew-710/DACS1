@@ -4,8 +4,10 @@ import threading
 from tkinter import messagebox
 from Handle_login_logout.user_session import get_current_user
 from Database.handle import get_msg
+from datetime import datetime
 
-HOST = '127.0.0.1'
+
+HOST = '192.168.1.11'
 PORT = 5051
 
 import customtkinter as ctk
@@ -50,11 +52,13 @@ class ServerChatGUI(ctk.CTkFrame):
     def send_message(self, event=None):
         from Database.handle import insert_msg
         msg = self.entry.get()
+        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if msg:
-            full_msg = f" [admin] {self.user.username}: {msg}" if self.user else f"Unknown: {msg}"
+            full_msg = f"[{time}] [admin] {self.user.username}: {msg}"
+            msg_inserted = f"[admin] {self.user.username}: {msg}"
             try:
                 self.sock.sendall(full_msg.encode("utf-8"))
-                insert_msg(self.user.username,full_msg)
+                insert_msg(self.user.username,msg_inserted)
             except Exception as e:
                 messagebox.showerror("Lỗi", f"Lỗi gửi tin: {e}")
             self.entry.delete(0, "end")

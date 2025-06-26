@@ -1,5 +1,8 @@
 import customtkinter as ctk
 from tkinter import messagebox
+
+from pandas import from_dummies
+
 from Database.handle import get_connection
 from Handle_login_logout.user_session import get_current_user
 
@@ -15,7 +18,7 @@ class OrderList(ctk.CTkFrame):
         ctk.CTkLabel(self, text="ĐƠN HÀNG CHỜ XÁC NHẬN", font=("Arial", 16, "bold"), text_color="#FFD600").pack(pady=(15, 5))
         self.pending_frame = ctk.CTkFrame(self, fg_color="#2B2D31")
         self.pending_frame.pack(fill="x", padx=10, pady=5)
-        self.load_order_items(username, frame=self.pending_frame, status="pending delivery")
+        self.load_order_items(username, frame=self.pending_frame, status="Đang xử lý")
 
         # Hiển thị các đơn còn lại
         ctk.CTkLabel(self, text="ĐƠN HÀNG ĐÃ XÁC NHẬN/KHÁC", font=("Arial", 16, "bold"), text_color="#00E676").pack(pady=(20, 5))
@@ -25,15 +28,15 @@ class OrderList(ctk.CTkFrame):
 
     def load_order_items(self, username, frame, status):
         try:
-            if status == "pending delivery":
+            if status == "Đang xử lý":
                 self.cursor.execute(
                     "SELECT order_id, order_status, food_item, address, quantity FROM orders WHERE username = %s AND order_status = %s",
-                    (username, 'pending delivery')
+                    (username, 'Đang xử lý')
                 )
             else:
                 self.cursor.execute(
                     "SELECT order_id, order_status, food_item, address, quantity FROM orders WHERE username = %s AND order_status != %s",
-                    (username, 'pending delivery')
+                    (username, 'Đang xử lý')
                 )
             rows = self.cursor.fetchall()
             for row in rows:
@@ -60,31 +63,63 @@ class OrderList(ctk.CTkFrame):
         qty_label = ctk.CTkLabel(qty_frame, textvariable=qty_var, font=("Arial", 14, "bold"), text_color="#FFFFFF")
         qty_label.pack(side="left", padx=5)
 
-        # Nút giảm số lượng
-        def decrease_quantity():
-            new_qty = max(1, int(qty_var.get()) - 1)
-            qty_var.set(str(new_qty))
-            self.update_quantity(order_id, new_qty)
+        if order_status == "Đang xử lý":
+            # Frame cho số lượng và nút điều chỉnh
+            qty_frame = ctk.CTkFrame(item_frame, fg_color="transparent")
+            qty_frame.pack(side="right", padx=10, pady=10)
 
-        minus_btn = ctk.CTkButton(qty_frame, text="-", command=decrease_quantity, fg_color="#00A8FF",
-                                 hover_color="#0077B6", width=30, height=30, corner_radius=5)
-        minus_btn.pack(side="left", padx=2)
+            # Hiển thị số lượng
+            qty_var = ctk.StringVar(value=str(quantity))
+            qty_label = ctk.CTkLabel(qty_frame, textvariable=qty_var, font=("Arial", 14, "bold"), text_color="#FFFFFF")
+            qty_label.pack(side="left", padx=5)
 
-        # Nút tăng số lượng
-        def increase_quantity():
-            new_qty = int(qty_var.get()) + 1
-            qty_var.set(str(new_qty))
-            self.update_quantity(order_id, new_qty)
+            # Nút giảm
+            def decrease_quantity():
+                new_qty = max(1, int(qty_var.get()) - 1)
+                qty_var.set(str(new_qty))
+                self.update_quantity(order_id, new_qty)
 
-        plus_btn = ctk.CTkButton(qty_frame, text="+", command=increase_quantity, fg_color="#00A8FF",
-                                hover_color="#0077B6", width=30, height=30, corner_radius=5)
-        plus_btn.pack(side="left", padx=2)
+            minus_btn = ctk.CTkButton(qty_frame, text="-", command=decrease_quantity, fg_color="#00A8FF",
+                                      hover_color="#0077B6", width=30, height=30, corner_radius=5)
+            minus_btn.pack(side="left", padx=2)
+
+            # Nút tăng
+            def increase_quantity():
+                new_qty = int(qty_var.get()) + 1
+                qty_var.set(str(new_qty))
+                self.update_quantity(order_id, new_qty)
+
+            plus_btn = ctk.CTkButton(qty_frame, text="+", command=increase_quantity, fg_color="#00A8FF",
+                                     hover_color="#0077B6", width=30, height=30, corner_radius=5)
+            plus_btn.pack(side="left", padx=2)
+
+            # Nút chỉnh sửa
+            def edit_order():
+                self.open_edit_order_dialog(order_id)
+
+            edit_btn = ctk.CTkButton(
+                item_frame,
+                text="Chỉnh sửa",
+                command=edit_order,
+                fg_color="#FFD600",
+                text_color="#000000",
+                hover_color="#FFC107",
+                width=100,
+                height=30,
+                corner_radius=8,
+                font=("Arial", 12, "bold")
+            )
+            edit_btn.pack(side="right", padx=10, pady=10)
+        else:
+            # Chỉ hiển thị số lượng như label tĩnh
+            qty_label = ctk.CTkLabel(item_frame, text=f"Số lượng: {quantity}", font=("Arial", 14), text_color="#AAAAAA")
+            qty_label.pack(side="right", padx=10, pady=10)
 
     def update_quantity(self, order_id, quantity):
         try:
             self.cursor.execute(
                 "UPDATE orders SET quantity = %s WHERE order_id = %s AND order_status = %s",
-                (quantity, order_id, 'pending delivery')
+                (quantity, order_id, 'Đang xử lý')
             )
             self.conn.commit()
             messagebox.showinfo("Thành công", "Số lượng đã được cập nhật!")
@@ -137,7 +172,7 @@ class OrderList(ctk.CTkFrame):
             try:
                 self.cursor.execute(
                     "UPDATE orders SET food_item = %s, address = %s WHERE order_id = %s AND order_status = %s",
-                    (new_food, new_address, order_id, 'pending delivery')
+                    (new_food, new_address, order_id, 'Đang xử lý')
                 )
                 self.conn.commit()
                 messagebox.showinfo("Thành công", "Đơn hàng đã được cập nhật thành công!")
@@ -147,7 +182,7 @@ class OrderList(ctk.CTkFrame):
                     widget.destroy()
                 for widget in self.other_frame.winfo_children():
                     widget.destroy()
-                self.load_order_items(self.user.username, frame=self.pending_frame, status="pending delivery")
+                self.load_order_items(self.user.username, frame=self.pending_frame, status="Đang xử lý")
                 self.load_order_items(self.user.username, frame=self.other_frame, status="other")
             except Exception as e:
                 messagebox.showerror("Lỗi", f"Không thể cập nhật đơn hàng: {e}")
@@ -177,3 +212,30 @@ class OrderList(ctk.CTkFrame):
             width=120
         )
         cancel_btn.pack(side="right", padx=5)
+        cancel_order_btn = ctk.CTkButton(
+            button_frame,
+            text="Hủy đơn",
+            command=lambda: self.cancel_order(order_id, popup),
+            fg_color="#FF5555",
+            text_color="#23272E",
+            hover_color="#CC4444",
+            font=("Arial", 12, "bold"),
+            width=120
+        )
+        cancel_order_btn.pack(side="right", padx=5)
+
+    def cancel_order(self, order_id, popup):
+        from Database.handle import cancel_order
+
+        confirm = messagebox.askyesno("Xác nhận hủy", "Bạn có chắc chắn muốn hủy đơn hàng này không?")
+        if confirm:
+            cancel_order(order_id)
+            messagebox.showinfo("Thành công", "Đơn hàng đã được hủy.")
+            popup.destroy()
+            # Refresh order lists
+            for widget in self.pending_frame.winfo_children():
+                widget.destroy()
+            for widget in self.other_frame.winfo_children():
+                widget.destroy()
+            self.load_order_items(self.user.username, frame=self.pending_frame, status="Đang xử lý")
+            self.load_order_items(self.user.username, frame=self.other_frame, status="other")

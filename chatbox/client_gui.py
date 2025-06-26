@@ -4,12 +4,14 @@ import socket
 import threading
 from Handle_login_logout.user_session import get_current_user
 from Database.handle import get_msg, insert_msg
+from datetime import datetime
 
-HOST = socket.gethostbyname(socket.gethostname())
+HOST = '192.168.1.11'
 PORT = 5051
 
 class ChatClient(ctk.CTkToplevel):
     def __init__(self, master=None):
+
         super().__init__(master)
         self.user = get_current_user()
         if not self.user:
@@ -61,7 +63,7 @@ class ChatClient(ctk.CTkToplevel):
             self.destroy()
             return
 
-        # Lắng nghe tin nhắn đến
+
         self.receive_thread = threading.Thread(target=self.receive_messages, daemon=True)
         self.receive_thread.start()
 
@@ -75,11 +77,14 @@ class ChatClient(ctk.CTkToplevel):
 
     def send_message(self, event=None):
         msg = self.entry.get().strip()
+        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if msg:
-            full_msg = f"[user] {self.user.username}: {msg}"
+            full_msg = f"[{time}][user] {self.user.username}: {msg}"
+            msg_insert = f"[user] {self.user.username}: {msg}"
+            print(time)
             try:
                 self.sock.sendall(full_msg.encode('utf-8'))
-                insert_msg(self.user.username, full_msg)
+                insert_msg(self.user.username, msg_insert)
             except Exception as e:
                 messagebox.showerror("Lỗi", f"Lỗi gửi tin: {e}")
             self.entry.delete(0, "end")
