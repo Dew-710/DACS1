@@ -1,7 +1,6 @@
 import mysql.connector
 from Handle_login_logout.user import User
-
-
+import bcrypt
 
 
 

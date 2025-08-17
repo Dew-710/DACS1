@@ -75,7 +75,7 @@ class EditAccountFrame(ctk.CTkFrame):
         self.logout_button = ctk.CTkButton(self, text="Đăng xuất", fg_color="red", command=self.logout)
         self.logout_button.pack()
 
-    def save_info(self):
+    def save_info(self,):
         if self.user:
 
             self.user.update_info(

@@ -7,6 +7,7 @@ from Handle_login_logout.user_session import get_current_user
 import requests
 from io import BytesIO
 from PIL import Image
+import speech_recognition as sr
 
 import threading
 
@@ -192,3 +193,27 @@ class CartView(ctk.CTkFrame):
     def cash (self) :
         self.destroy()
 
+def start_speech_recognition(app):
+    recognizer = sr.Recognizer()
+    mic = sr.Microphone()
+
+    def callback(recognizer, audio):
+        try:
+            text = recognizer.recognize_google(audio, language='vi-VN')
+            print("🗣️ Bạn nói:", text)
+
+            if "thanh toán" in text.lower():
+                print("🛒 Bắt đầu thanh toán...")
+                app.submit_order()
+
+        except sr.UnknownValueError:
+            print("🤷 Không hiểu bạn nói gì.")
+        except sr.RequestError:
+            print("⚠️ Không kết nối được với Google API.")
+
+    with mic as source:
+        recognizer.adjust_for_ambient_noise(source)
+        print("🎧 Bắt đầu lắng nghe...")
+
+    stop_listening = recognizer.listen_in_background(mic, callback)
+    return stop_listening

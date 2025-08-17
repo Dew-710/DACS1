@@ -7,7 +7,7 @@ from Database.handle import get_msg
 from datetime import datetime
 
 
-HOST = '192.168.1.11'
+HOST = '0.0.0.0'
 PORT = 5051
 
 import customtkinter as ctk
